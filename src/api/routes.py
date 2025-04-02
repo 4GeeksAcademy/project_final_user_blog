@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User,Writer
+from api.models import db, User,Writer,Reader
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -76,3 +76,66 @@ def delete_writer(writer_id):
     db.session.commit()
     return jsonify({"message": "Writer eliminado correctamente"}), 200
 
+
+
+
+
+
+##### reader crud #####
+
+
+
+
+
+
+@api.route('/readers', methods=['POST'])
+def create_reader():
+    data = request.get_json()
+
+    
+    if not all(field in data for field in ('first_name', 'last_name', 'email', 'password')):
+        return jsonify({"error": "Faltan datos obligatorios"}), 400
+
+    existing = Reader.query.filter_by(email=data['email']).first()
+    if existing:
+        return jsonify({"error": "Ya existe un escritor con este correo"}), 409
+
+    reader = Reader(
+        first_name=data['first_name'],
+        last_name=data['last_name'],
+        email=data['email'],
+        password=data['password']  
+    )
+
+    db.session.add(reader)
+    db.session.commit()
+
+    return jsonify(reader.serialize()), 201
+
+
+@api.route('/readers', methods=['GET'])            
+def get_reader():                
+    readers = Reader.query.all()
+    return jsonify([writer.serialize() for writer in readers]), 200
+
+@api.route('/readers/<int:reader_id>', methods=['PUT'])
+def update_reader(reader_id):
+    reader = Reader.query.get_or_404(reader_id)      
+    data = request.get_json()   
+
+    reader.first_name = data.get('first_name', reader.first_name)
+    reader.last_name = data.get('last_name', reader.last_name)
+    reader.email = data.get('email', reader.email)
+    reader.password = data.get('password', reader.password)
+
+    db.session.commit()
+    return jsonify(reader.serialize()), 200
+
+
+
+@api.route('/readers/<int:reader_id>', methods=['DELETE'])
+def delete_reader(reader_id):
+    reader = Reader.query.get_or_404(reader_id)
+    db.session.delete(reader)
+    db.session.commit()
+    return jsonify({"message": "Reader eliminado correctamente"}), 200

@@ -1,39 +1,43 @@
+
+
 import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import WriterEditor from "./writerEditor";
 import { Button } from "react-bootstrap";
 import WriterForm from "./writerForm";
+import ReaderForm from "./readerForm";
+import { ReaderEditor } from "./readerEditor";
 
 
 
 		
 		
-	export const Writer = () => {
+	export const Reader = () => {
 	const { store, actions } = useContext(Context);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [selectedWriter, setSelectedWriter] = useState(null);
 
-    const handleEdit = (writer) => {
-        setSelectedWriter(writer);
+    const handleEdit = (reader) => {
+        setSelectedWriter(reader);
         setShowEditModal(true);    
     };
 
     return (
         <div className="container mt-4">
-            <h2 className="mb-4">Lista de Escritores</h2>
+            <h2 className="mb-4">Lista de lectotes</h2>
             <button className="btn btn-primary mb-3" onClick={() => setShowAddModal(true)}>
-                Agregar Escritor
+                Agregar Lector
             </button>
             <ul className="list-group">
-                {store.writer.map((w) => (
-                    <li key={w.id} className="list-group-item d-flex justify-content-between align-items-center">
-                        {w.first_name} {w.last_name}
+                {store.reader.map((r) => (
+                    <li key={r.id} className="list-group-item d-flex justify-content-between align-items-center">
+                        {r.first_name} {r.last_name}
                         <div>
-                            <button className="btn btn-warning me-2" onClick={() => handleEdit(w)}>
+                            <button className="btn btn-warning me-2" onClick={() => handleEdit(r)}>
                                 Editare
                             </button>
-                            <button className="btn btn-danger" onClick={() => actions.eliminarWriter(w.id)}>
+                            <button className="btn btn-danger" onClick={() => actions.eliminarReader(r.id)}>
                                 Eliminar
                             </button>
                         </div>
@@ -46,18 +50,17 @@ import WriterForm from "./writerForm";
 
             {/* Modal para editar escritor */}
             {selectedWriter && (
-                <WriterEditor
+                <ReaderEditor
                     show={showEditModal}
                     handleClose={() => setShowEditModal(false)}
-                    writer={selectedWriter}
+                    reader={selectedWriter}
                     actions={actions}
 					
                 />
             )}
 
-          
-            <WriterForm show={showAddModal} handleClose={() => setShowAddModal(false)} actions={actions} />
+            {/* Modal para agregar escritor */}
+            <ReaderForm show={showAddModal} handleClose={() => setShowAddModal(false)} actions={actions} />
         </div>
     );
 };
-

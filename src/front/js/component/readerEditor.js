@@ -1,13 +1,15 @@
+
+
 import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import { Modal, Button } from "react-bootstrap";
 
-const WriterEditor = ({ show, handleClose,writer }) => {
+export const ReaderEditor = ({ show, handleClose,reader}) => {
 	const { store, actions } = useContext(Context);
 	const [formData, setFormData] = useState({
-		first_name: writer.first_name,
-		last_name: writer.last_name,
-		email: writer.email
+		first_name:reader.first_name,
+		last_name:reader.last_name,
+		email:reader.email
 	});
 
 	// const [formData, setFormData] = useState({ first_name: "", last_name: "", email: "", password: "" });
@@ -19,7 +21,7 @@ const WriterEditor = ({ show, handleClose,writer }) => {
     };
 
     const handleUpdate = async () => {
-		await actions.updateWriter(writer.id, formData);
+		await actions.updateReader(reader.id, formData);
 		alert("Escritor actualizado");
 		handleClose();
 	};
@@ -27,7 +29,7 @@ const WriterEditor = ({ show, handleClose,writer }) => {
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Editar Escritor</Modal.Title>
+                <Modal.Title>Editar Lector</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <input
@@ -68,4 +70,3 @@ const WriterEditor = ({ show, handleClose,writer }) => {
 };
 
 
-export default WriterEditor
