@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -61,6 +62,33 @@ class Reader(db.Model):
         }  
 
 
+
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    writer_id = db.Column(db.Integer, db.ForeignKey('writer.id'), nullable=False)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    likes = db.Column(db.Integer, default=0)
+    abstract = db.Column(db.String(500), nullable=True)
+
+    writer = db.relationship('Writer', backref=db.backref('posts', lazy=True))
+
+    def __repr__(self):
+        return f'<Post {self.title}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "writer_id": self.writer_id,
+            "fecha": self.fecha.isoformat(),
+            "likes": self.likes,
+            "abstract": self.abstract
+        }
 
 
 

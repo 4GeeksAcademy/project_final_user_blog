@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User,Writer,Reader
+from api.models import db, User,Writer,Reader,Post
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -139,3 +139,70 @@ def delete_reader(reader_id):
     db.session.delete(reader)
     db.session.commit()
     return jsonify({"message": "Reader eliminado correctamente"}), 200
+
+
+
+
+
+##### crud posts  ######
+
+
+
+
+
+
+
+@api.route('/posts', methods=['POST'])
+def create_post():
+    data = request.get_json()
+    new_post = Post(
+        title=data.get('title'),
+        content=data.get('content'),
+        writer_id=data.get('writer_id'),
+        abstract=data.get('abstract'),
+        likes=data.get('likes', 0)  # Por defecto 0 si no se envía
+    )
+    db.session.add(new_post)
+    db.session.commit()
+    return jsonify(new_post.serialize()), 201
+
+
+
+
+
+@api.route('/posts', methods=['GET'])
+def get_posts():
+    posts = Post.query.all()
+    return jsonify([post.serialize() for post in posts]), 200
+
+
+@api.route('/posts/<int:post_id>', methods=['GET'])
+def get_post_id(post_id):
+    post = Post.query.get_or_404(post_id)
+    return jsonify(post.serialize()), 200
+
+
+
+@api.route('/posts/<int:post_id>', methods=['PUT'])
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    data = request.get_json()
+
+    post.title = data.get('title', post.title)
+    post.content = data.get('content', post.content)
+    post.abstract = data.get('abstract', post.abstract)  
+    post.likes = data.get('likes', post.likes)
+
+    db.session.commit()
+
+    return jsonify(post.serialize()), 200
+
+  
+
+@api.route('/posts/<int:post_id>', methods=['DELETE'])
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    db.session.delete(post)
+    db.session.commit()
+
+    return jsonify({"message": "Post eliminado correctamente"}), 200
