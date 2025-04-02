@@ -4,7 +4,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			message: null,
 			writer: [
 				
-			]
+			],
+			reader: [
+				
+			],
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -34,6 +37,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error al agregar writer:", error);
 				}
 			},
+			agregarReader: async (readerData) => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/readers", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(readerData)
+					});
+			
+					if (!resp.ok) throw new Error("Error al agregar escritor");
+			
+					const data = await resp.json();
+			
+					// opcional: actualizar el store
+					const store = getStore();
+					setStore({ reader: [...store.reader, data] });
+			
+					return data;
+				} catch (error) {
+					console.error("Error al agregar writer:", error);
+				}
+			},
 			updateWriter: async (writer_id, updatedData) => {
 				try {
 					const resp = await fetch(`${process.env.BACKEND_URL}/api/writers/${writer_id}`, {
@@ -50,14 +76,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 					// Actualizar el store
 					const store = getStore();
-					const updatedWriters = store.writer.map(writer =>
-						writer.id === writer_id ? data : writer
+					const updatedWriters = store.writer.map(w =>
+						w.id === writer_id ? data : w
 					);
 					setStore({ writer: updatedWriters });
 			
 					return data;
 				} catch (error) {
 					console.error("Error al actualizar writer:", error);
+				}
+			},
+			updateReader: async (reader_id, updatedData) => {
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/readers/${reader_id}`, {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(updatedData)     
+					});
+			
+					if (!resp.ok) throw new Error("Error al actualizar el reader");
+			
+					const data = await resp.json();
+			
+					// Actualizar el store
+					const store = getStore();
+					const updatedReaders = store.reader.map(reader =>
+						reader.id === reader_id ? data : reader
+					);
+					setStore({ reader: updatedReaders });
+			
+					return data;
+				} catch (error) {
+					console.error("Error al actualizar lector:", error);
 				}
 			},
 			eliminarWriter:async (writer_id) => {
@@ -88,6 +140,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
+			eliminarReader:async (reader_id) => {
+				
+				try{
+					// fetching data from the backend
+					const resp = await fetch(process.env.BACKEND_URL + `/api/readers/${reader_id}`,{
+						method:"DELETE"
+					})
+					
+					if (!resp.ok) {  
+						throw new Error("Error al eliminar el lector");
+					}
+			
+					const data = await resp.json();
+			
+					
+					const store = getStore();
+					const updatedReaders = store.reader.filter(r => r.id !== reader_id);
+					setStore({ reader: updatedReaders });
+			
+					return data;
+					
+					
+					// don't forget to return something, that is how the async resolves
+					
+				}catch(error){
+					console.log("Error loading message from backend", error)
+				}
+			},
+			
 
 			getMessage: async () => {
 				try{
@@ -95,6 +176,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/writers")
 					const data = await resp.json()
 					setStore({ writer: data })
+					
+					
+					// don't forget to return something, that is how the async resolves
+					return data;
+				}catch(error){
+					console.log("Error loading message from backend", error)
+				}
+			},
+			getReader: async () => {
+				try{
+					// fetching data from the backend
+					const resp = await fetch(process.env.BACKEND_URL + "/api/readers")
+					const data = await resp.json()
+					setStore({ reader: data })
 					
 					
 					// don't forget to return something, that is how the async resolves
