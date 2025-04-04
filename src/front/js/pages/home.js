@@ -12,12 +12,7 @@ export const Home = () => {
 
 	return (
 		<div className="text-center mt-5">
-			{/* <WriterForm/> */}
-			<WriterForm/>
-			<Writer/>
-
-            <ReaderForm/>
-			<Reader/>
+		<h1>hola mundo</h1>
 		</div>
 	);
 };

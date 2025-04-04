@@ -166,6 +166,8 @@ def create_post():
     db.session.commit()
     return jsonify(new_post.serialize()), 201
 
+  
+
 
 
 
@@ -179,13 +181,13 @@ def get_posts():
 @api.route('/posts/<int:post_id>', methods=['GET'])
 def get_post_id(post_id):
     post = Post.query.get_or_404(post_id)
-    return jsonify(post.serialize()), 200
-
-
+    return jsonify(post.serialize()), 200   
+   
+     
 
 @api.route('/posts/<int:post_id>', methods=['PUT'])
 def update_post(post_id):
-    post = Post.query.get_or_404(post_id)
+    post = Post.query.get_or_404(post_id) 
     data = request.get_json()
 
     post.title = data.get('title', post.title)
