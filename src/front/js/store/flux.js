@@ -8,6 +8,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			reader: [
 				
 			],
+			post: [
+				
+			],
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -190,6 +193,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/readers")
 					const data = await resp.json()
 					setStore({ reader: data })
+					
+					
+					// don't forget to return something, that is how the async resolves
+					return data;
+				}catch(error){
+					console.log("Error loading message from backend", error)
+				}
+			},
+			getPost: async () => {
+				try{
+					// fetching data from the backend
+					const resp = await fetch(process.env.BACKEND_URL + "/api/posts")
+					const data = await resp.json()
+					setStore({ post: data })
 					
 					
 					// don't forget to return something, that is how the async resolves
