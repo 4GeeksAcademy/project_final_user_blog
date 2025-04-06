@@ -92,3 +92,40 @@ class Post(db.Model):
 
 
 
+
+
+
+
+
+
+
+
+class Comentario(db.Model):
+    __tablename__ = 'comentarios'
+
+    id = db.Column(db.Integer, primary_key=True)
+    descripcion = db.Column(db.Text, nullable=False)
+    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    likes = db.Column(db.Integer, default=0)
+
+    reader_id = db.Column(db.Integer, db.ForeignKey('reader.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+
+    reader = db.relationship('Reader', backref=db.backref('comentarios', lazy=True))
+    post = db.relationship('Post', backref=db.backref('comentarios', lazy=True))
+
+    def __repr__(self):
+        return f'<Comentario {self.descripcion[:20]}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "descripcion": self.descripcion,
+            "fecha": self.fecha.isoformat(),
+            "likes": self.likes,
+            "reader_id": self.reader_id,
+            "post_id": self.post_id
+        }
+
+
+

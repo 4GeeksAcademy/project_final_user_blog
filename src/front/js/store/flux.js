@@ -11,6 +11,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			post: [
 				
 			],
+			comentario: [
+				
+			],
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -171,6 +174,77 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
+			agregarCommentario: async (comentData) => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "api/comentarios", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(comentData)
+					});
+			
+					if (!resp.ok) throw new Error("Error al agregar comentario");
+			
+					const data = await resp.json();
+			
+					// opcional: actualizar el store
+					const store = getStore();
+					setStore({ comentario: [...store.comentario, data] });
+			
+					return data;
+				} catch (error) {
+					console.error("Error al agregar :", error);
+				}
+			},
+			getAllComentaryByPostId: async (postId) => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + `posts/comentarios${postId}`, {
+						method: "GET",
+						
+					});
+			
+					if (!resp.ok) throw new Error("Error al obtener comentario");
+			
+					const data = await resp.json();
+			
+					// opcional: actualizar el store
+					const store = getStore();
+					setStore({ comentario: data });
+			
+					return data;
+				} catch (error) {
+					console.error("Error al agregar :", error);
+				}
+			},
+			eliminarComentario:async (comentario_id) => {
+				
+				try{
+					// fetching data from the backend
+					const resp = await fetch(process.env.BACKEND_URL + `/api/comentarios/${comentario_id}`,{
+						method:"DELETE"
+					})
+					
+					if (!resp.ok) {  
+						throw new Error("Error al eliminar el comentario");
+					}
+			
+					const data = await resp.json();
+			
+					
+					const store = getStore();
+					const updatedComentarios = store.comentario.filter(c => c.id !== comentario_id);
+					setStore({ comentario: updatedComentarios });
+			
+					return data;
+					
+					
+					// don't forget to return something, that is how the async resolves
+					
+				}catch(error){
+					console.log("Error loading message from backend", error)
+				}
+			},
 			
 
 			getMessage: async () => {
@@ -207,6 +281,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/posts")
 					const data = await resp.json()
 					setStore({ post: data })
+					
+					
+					// don't forget to return something, that is how the async resolves
+					return data;
+				}catch(error){
+					console.log("Error loading message from backend", error)
+				}
+			},
+			getCommentario: async () => {
+				try{
+					// fetching data from the backend
+					const resp = await fetch(process.env.BACKEND_URL + "/api/comentarios")
+					const data = await resp.json()
+					setStore({ comentario: data })
 					
 					
 					// don't forget to return something, that is how the async resolves
