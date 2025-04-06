@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User,Writer,Reader,Post
+from api.models import db, User,Writer,Reader,Post,Comentario
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -208,3 +208,87 @@ def delete_post(post_id):
     db.session.commit()
 
     return jsonify({"message": "Post eliminado correctamente"}), 200
+
+
+
+
+
+
+
+
+#### crud comentario########
+
+
+
+@api.route('/comentarios', methods=['POST'])
+def create_comentario():
+    data = request.get_json()
+
+    if not all(field in data for field in ('descripcion', 'reader_id', 'post_id')):
+        return jsonify({"error": "Faltan campos obligatorios"}), 400
+
+    comentario = Comentario(
+        descripcion=data['descripcion'],
+        reader_id=data['reader_id'],
+        post_id=data['post_id'],
+        likes=data.get('likes', 0)
+    )
+
+    db.session.add(comentario)
+    db.session.commit()
+
+    return jsonify(comentario.serialize()), 201
+
+
+
+
+@api.route('/comentarios', methods=['GET'])
+def get_comentarios():
+    comentarios = Comentario.query.all()
+    return jsonify([c.serialize() for c in comentarios]), 200
+
+
+
+@api.route('/posts/<int:post_id>/comentarios', methods=['GET'])
+def get_comentarios_by_post(post_id):
+    comentarios = Comentario.query.filter_by(post_id=post_id).all()
+    
+    if not comentarios:
+        return jsonify({"message": "No hay comentarios para este post"}), 404
+
+    return jsonify([c.serialize() for c in comentarios]), 200
+
+
+
+
+
+
+@api.route('/comentarios/<int:comentario_id>', methods=['DELETE'])
+def delete_comentario(comentario_id):
+    comentario = Comentario.query.get_or_404(comentario_id)
+    db.session.delete(comentario)
+    db.session.commit()
+    return jsonify({"message": "Comentario eliminado correctamente"}), 200
+
+
+
+
+@api.route('/comentarios/<int:comentario_id>', methods=['GET'])
+def get_comentario(comentario_id):
+    comentario = Comentario.query.get_or_404(comentario_id)
+    return jsonify(comentario.serialize()), 200
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

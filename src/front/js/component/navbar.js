@@ -38,6 +38,7 @@ export const Navbar = () => {
                         <li><Link className="dropdown-item" to="/writer">Lista Writer</Link></li>
                         <li><Link className="dropdown-item" to="/reader">Lista Reader</Link></li>
                         <li><Link className="dropdown-item" to="/post">todos los posts</Link></li>
+                        <li><Link className="dropdown-item" to="/comment">todos los comentarios</Link></li>
                     </ul>
                 </div>
             </div>
