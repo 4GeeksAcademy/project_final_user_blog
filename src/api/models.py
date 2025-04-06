@@ -129,3 +129,10 @@ class Comentario(db.Model):
 
 
 
+
+
+
+
+
+
+
