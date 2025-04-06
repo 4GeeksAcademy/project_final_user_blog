@@ -14,6 +14,8 @@ import { Writer } from "./component/writer";
 import { Reader } from "./component/reader";
 import { Post } from "./component/post";
 import { Comment } from "./component/comment";
+import Login from "./component/login";
+import { Bienvenida } from "./component/bienvenida";
 
 //create your first component
 const Layout = () => {
@@ -34,6 +36,8 @@ const Layout = () => {
                         <Route element={<Writer />} path="/writer" />
                         <Route element={<Reader />} path="/reader" />
                         <Route element={<Post />} path="/post" />
+                        <Route element={<Login />} path="/login" />
+                        <Route element={<Bienvenida />} path="/bienvenida" />
                         <Route element={<Comment />} path="/comment" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />

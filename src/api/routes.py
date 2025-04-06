@@ -80,6 +80,36 @@ def delete_writer(writer_id):
 
 
 
+@api.route('/writers/login', methods=['POST'])
+def login():
+#    response_body = {
+#         "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
+#     }
+#    return jsonify(response_body), 200
+
+    data = request.get_json()
+
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({"message": "Por favor ingresa el email y la contraseña"}), 400
+
+    writer = Writer.query.filter_by(email=email).first()
+
+    if not writer or writer.password != int(password):  
+        return jsonify({"message": "Credenciales incorrectas"}), 401
+
+    return jsonify({
+        "message": f"Bienvenido, {writer.first_name}!",
+        "writer": writer.serialize()
+    }), 200
+
+
+
+
+
+
 
 ##### reader crud #####
 
@@ -277,6 +307,15 @@ def delete_comentario(comentario_id):
 def get_comentario(comentario_id):
     comentario = Comentario.query.get_or_404(comentario_id)
     return jsonify(comentario.serialize()), 200
+
+
+
+
+
+
+
+
+
 
 
 
