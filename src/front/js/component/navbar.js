@@ -27,7 +27,7 @@ export const Navbar = () => {
     return (
         <nav className="navbar navbar-light bg-light">
             <div className="container">
-                <Link to="/">
+                <Link to="/post">
                     <span className="navbar-brand mb-0 h1">Cerrar session</span>
                 </Link>
                 <div className="ml-auto dropdown">
@@ -40,6 +40,7 @@ export const Navbar = () => {
                         <li><Link className="dropdown-item" to="/post">todos los posts</Link></li>
                         <li><Link className="dropdown-item" to="/comment">todos los comentarios</Link></li>
                         <li><Link className="dropdown-item" to="/login">login writer</Link></li>
+                        <li><Link className="dropdown-item" to="/logino">login reader</Link></li>
                        
                     </ul>
                 </div>

@@ -16,6 +16,8 @@ import { Post } from "./component/post";
 import { Comment } from "./component/comment";
 import Login from "./component/login";
 import { Bienvenida } from "./component/bienvenida";
+import { BienvenidaReader } from "./component/bienvenidaReader";
+import LoginReader from "./component/loginReader";
 
 //create your first component
 const Layout = () => {
@@ -37,7 +39,9 @@ const Layout = () => {
                         <Route element={<Reader />} path="/reader" />
                         <Route element={<Post />} path="/post" />
                         <Route element={<Login />} path="/login" />
+                        <Route element={<LoginReader />} path="/logino" />
                         <Route element={<Bienvenida />} path="/bienvenida" />
+                        <Route element={<BienvenidaReader />} path="/bienvenido" />
                         <Route element={<Comment />} path="/comment" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
