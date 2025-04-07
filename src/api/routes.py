@@ -173,6 +173,34 @@ def delete_reader(reader_id):
 
 
 
+@api.route('/readers/login', methods=['POST'])
+def loginReader():
+#    response_body = {
+#         "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
+#     }
+#    return jsonify(response_body), 200
+
+    data = request.get_json()
+
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({"message": "Por favor ingresa el email y la contraseña"}), 400
+
+    reader = Reader.query.filter_by(email=email).first()
+
+    if not reader or reader.password != int(password):  
+        return jsonify({"message": "Credenciales incorrectas"}), 401
+
+    return jsonify({
+        "message": f"Bienvenido, {reader.first_name}!",
+        "reader": reader.serialize()
+    }), 200
+
+
+
+
 
 ##### crud posts  ######
 
