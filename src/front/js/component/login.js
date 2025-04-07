@@ -1,29 +1,26 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const Login=()=> {
+
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Context } from '../store/appContext'; // Asegúrate que la ruta esté correcta
+
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mensaje, setMensaje] = useState('');
   const navigate = useNavigate();
+  const { actions } = useContext(Context);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("https://upgraded-trout-r56pvr9vgrg357p5-3001.app.github.dev/api/writers/login", {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+    const user = await actions.loginWriter({ email, password });
 
-    const data = await response.json();
-
-    if (response.ok) {
-       
-        navigate('/bienvenida', { state: { nombre: data.writer.first_name } });
-      } else {
-        setMensaje(data.message);
-      }
+    if (user) {
+      navigate('/bienvenida', { state: { nombre: user.writer.first_name } });
+    } else {
+      setMensaje("Credenciales incorrectas");
+    }
   };
 
   return (
@@ -46,10 +43,8 @@ const Login=()=> {
       </form>
 
       {mensaje && <p style={{ color: 'red' }}>{mensaje}</p>}
-    
     </div>
   );
-}
+};
 
-
-export default Login
+export default Login;

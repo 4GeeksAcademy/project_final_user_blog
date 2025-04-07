@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import React from 'react';
 import { Post } from './post';
+import { Comment } from './comment';
 
  export const BienvenidaReader =()=> {
   const location = useLocation();
@@ -8,12 +9,12 @@ import { Post } from './post';
 
   return (
     <div>
-      <h1>¡Bienvenido, {nombre}!</h1>
-      <p>Has iniciado sesión correctamente.</p>
+      <h1>¡Bienvenido reader, {nombre}!</h1>
+      <p>Aqui puedes solo comentar.</p>
 
 
 
-      <Post/>
+      <Comment/>
     </div>
   );
 }

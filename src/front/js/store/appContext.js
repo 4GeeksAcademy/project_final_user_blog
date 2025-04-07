@@ -19,7 +19,7 @@ const injectContext = PassedComponent => {
 						actions: { ...state.actions }
 					})
 			})
-		);
+		);   
 
 		useEffect(() => {
 			/**

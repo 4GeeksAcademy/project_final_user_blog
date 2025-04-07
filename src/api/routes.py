@@ -307,7 +307,7 @@ def get_comentarios():
 
 
 
-@api.route('/posts/<int:post_id>/comentarios', methods=['GET'])
+@api.route('/comentarios/<int:post_id>', methods=['GET'])
 def get_comentarios_by_post(post_id):
     comentarios = Comentario.query.filter_by(post_id=post_id).all()
     

@@ -1,6 +1,9 @@
+
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			currentUser:null,
 			message: null,
 			writer: [
 				
@@ -43,6 +46,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error al agregar writer:", error);
 				}
 			},
+			
 			agregarReader: async (readerData) => {
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/readers", {
@@ -199,7 +203,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getAllComentaryByPostId: async (postId) => {
 				try {
-					const resp = await fetch(process.env.BACKEND_URL + `posts/comentarios${postId}`, {
+					const resp = await fetch(process.env.BACKEND_URL + `/comentarios/${postId}`, {
 						method: "GET",
 						
 					});
@@ -245,6 +249,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
+			agregarPost: async (postData) => {
+				try {
+				  const resp = await fetch(process.env.BACKEND_URL + "/api/posts", {
+					method: "POST",
+					headers: {
+					  "Content-Type": "application/json"
+					},
+					body: JSON.stringify(postData)
+				  });
+			  
+				  if (!resp.ok) throw new Error("Error al agregar post");
+			  
+				  const data = await resp.json();
+				  const store = getStore();
+				  setStore({ post: [...store.post, data] });
+				  return data;
+				} catch (error) {
+				  console.error("Error al agregar post:", error);
+				  return null;
+				}
+			  },
+			  
 			
 
 			getMessage: async () => {
@@ -289,6 +315,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
+			LoginReader: async (credentials) => {
+				try {
+					const resp = await fetch('https://upgraded-trout-r56pvr9vgrg357p5-3001.app.github.dev/api/readers/login', {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(credentials)
+					});
+			
+					if (!resp.ok) throw new Error("Credenciales inválidas");
+			
+					const data = await resp.json();
+					
+					setStore({ currentUser:data }); // <-- aquí se guarda el writer logueado
+			
+					return data;
+				} catch (err) {
+					console.error("Error de login:", err);
+					return null;
+				}
+			},
+			
 			getCommentario: async () => {
 				try{
 					// fetching data from the backend
