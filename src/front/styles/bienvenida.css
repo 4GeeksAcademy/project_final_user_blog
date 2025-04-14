@@ -1,0 +1,39 @@
+.bienvenida-container {
+    height: 100vh;
+}
+
+.sidebar {
+    background-color: #f8f9fa;
+    width: 220px;
+    transition: width 0.3s;
+    border-right: 1px solid #ccc;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    font-weight: bold;
+    background-color: #e9ecef;
+    cursor: pointer;
+}
+
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-list li {
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.sidebar-list li:hover {
+    background-color: #dee2e6;
+}

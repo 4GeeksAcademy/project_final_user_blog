@@ -1,10 +1,10 @@
 
 import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
-import { Comentario } from "./comentario";
-import { AgregarPost } from "./agregarPost"; // importamos aquí
+import { Link } from "react-router-dom";
 
-export const Comment = () => {
+
+export const PostWriter = () => {
     const { store, actions } = useContext(Context);
     const [visibleComentarios, setVisibleComentarios] = useState(null);
 
@@ -18,6 +18,9 @@ export const Comment = () => {
 
     return (
         <div className="container mt-5">
+            <Link to="/bienvenida">
+                                <span className="navbar-brand mb-0 h1"> Mi Perfil</span>
+                            </Link>
             <h2 className="text-center mb-4">Posts</h2>
 
             {/* <AgregarPost />     */}
@@ -32,15 +35,8 @@ export const Comment = () => {
                                 <p className="card-text">{p.abstract}</p>
                                 <small className="text-muted">{p.fecha}</small>
                                 <div className="d-flex justify-content-between align-items-center mt-3">
-                                    <button className="btn btn-outline-primary">
-                                        <i className="fas fa-thumbs-up"></i> {p.likes}
-                                    </button>
-                                    <button
-                                         className="btn btn-outline-secondary"
-                                        onClick={() => toggleComentarios(p.id)}
-                                    >
-                                        Comentarios
-                                    </button>
+                                    
+                                   
                                     <button
                                         className="btn btn-outline-danger"
                                         onClick={() => handleDeletePost(p.id)}
@@ -48,9 +44,7 @@ export const Comment = () => {
                                         Eliminar      
                                     </button>
                                 </div>
-                                {visibleComentarios === p.id && (
-                                    <Comentario postId={p.id} actions={actions} />
-                                )}
+                               
                             </div>
                         </div>
                     </div>

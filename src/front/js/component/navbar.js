@@ -1,24 +1,3 @@
-// import React from "react";
-// import { Link } from "react-router-dom";
-
-// export const Navbar = () => {
-// 	return (
-// 		<nav className="navbar navbar-light bg-light">
-// 			<div className="container">
-// 				<Link to="/">
-// 					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
-// 				</Link>
-// 				<div className="ml-auto">
-// 					<Link to="/demo">
-// 						<button className="btn btn-primary">Check the Context in action</button>
-// 					</Link>
-// 				</div>
-// 			</div>
-// 		</nav>
-// 	);
-// };
-
-
 
 import React from "react";
 import { Link } from "react-router-dom";
@@ -26,11 +5,14 @@ import { Link } from "react-router-dom";
 export const Navbar = () => {
     return (
         <nav className="navbar navbar-light bg-light">
-            <div className="container">
-                <Link to="/post">
-                    <span className="navbar-brand mb-0 h1">Cerrar session</span>
+            <div className="container">   
+                <Link to="/">
+                    <span className="navbar-brand mb-0 h1"> Home</span>
                 </Link>
-                <div className="ml-auto dropdown">
+                {/* <Link to="/register_reader">
+                    <span className="navbar-brand mb-0 h1">Registro reader</span>  
+                </Link> */}
+                {/* <div className="ml-auto dropdown">   
                     <button className="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                         Menu
                     </button>
@@ -43,7 +25,7 @@ export const Navbar = () => {
                         <li><Link className="dropdown-item" to="/logino">login reader</Link></li>
                        
                     </ul>
-                </div>
+                </div> */}
             </div>
         </nav>
     );

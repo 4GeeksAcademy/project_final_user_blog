@@ -2,15 +2,15 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import { Comentario } from "./comentario";
-import { AgregarPost } from "./agregarPost"; // importamos aquí
 
-export const Comment = () => {
+
+export const CommentReader = () => {
     const { store, actions } = useContext(Context);
     const [visibleComentarios, setVisibleComentarios] = useState(null);
 
     const toggleComentarios = (postId) => {
         setVisibleComentarios(visibleComentarios === postId ? null : postId);
-    };
+    };   
 
     const handleDeletePost = async (postId) => {
         await actions.eliminarPost(postId);
@@ -32,21 +32,17 @@ export const Comment = () => {
                                 <p className="card-text">{p.abstract}</p>
                                 <small className="text-muted">{p.fecha}</small>
                                 <div className="d-flex justify-content-between align-items-center mt-3">
-                                    <button className="btn btn-outline-primary">
+                                <button className="btn btn-outline-primary">
                                         <i className="fas fa-thumbs-up"></i> {p.likes}
                                     </button>
+                                  
                                     <button
                                          className="btn btn-outline-secondary"
                                         onClick={() => toggleComentarios(p.id)}
                                     >
                                         Comentarios
                                     </button>
-                                    <button
-                                        className="btn btn-outline-danger"
-                                        onClick={() => handleDeletePost(p.id)}
-                                    >
-                                        Eliminar      
-                                    </button>
+                                  
                                 </div>
                                 {visibleComentarios === p.id && (
                                     <Comentario postId={p.id} actions={actions} />

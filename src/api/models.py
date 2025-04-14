@@ -85,6 +85,7 @@ class Post(db.Model):
             "title": self.title,
             "content": self.content,
             "writer_id": self.writer_id,
+            "writer_name": self.writer.first_name if self.writer else "Anónimo",
             "fecha": self.fecha.isoformat(),
             "likes": self.likes,
             "abstract": self.abstract
@@ -124,7 +125,8 @@ class Comentario(db.Model):
             "fecha": self.fecha.isoformat(),
             "likes": self.likes,
             "reader_id": self.reader_id,
-            "post_id": self.post_id
+            "post_id": self.post_id,
+            "reader_name": self.reader.first_name if self.reader else "Anónimo"
         }
 
 

@@ -1,9 +1,13 @@
 
 
 const getState = ({ getStore, getActions, setStore }) => {
+	 
 	return {
 		store: {
 			currentUser:null,
+			token:null,
+			currentUser1:null,
+			token1:null,
 			message: null,
 			writer: [
 				
@@ -25,7 +29,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			agregarWriter: async (writerData) => {
 				try {
-					const resp = await fetch(process.env.BACKEND_URL + "/api/writers", {
+					const resp = await fetch(process.env.BACKEND_URL + "/writers", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json"
@@ -46,10 +50,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error al agregar writer:", error);
 				}
 			},
+			setTokenAndUser: (token, user) => {
+				setStore({
+					token: token,
+					currentUser: user
+				});
+			},
+			setTokenAndUser1: (token, user) => {
+				setStore({
+					token1: token,
+					currentUser1: user
+				});
+			},
 			
 			agregarReader: async (readerData) => {
 				try {
-					const resp = await fetch(process.env.BACKEND_URL + "/api/readers", {
+					const resp = await fetch(process.env.BACKEND_URL + "/readers", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json"
@@ -126,7 +142,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				
 				try{
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + `/api/writers/${writer_id}`,{
+					const resp = await fetch(process.env.BACKEND_URL + `/writers/${writer_id}`,{
 						method:"DELETE"
 					})
 					
@@ -178,29 +194,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
+			
 			agregarCommentario: async (comentData) => {
 				try {
-					const resp = await fetch(process.env.BACKEND_URL + "api/comentarios", {
+					const store = getStore(); // obtenemos el token del store
+			
+					const resp = await fetch(process.env.BACKEND_URL + "/comentarios", {
 						method: "POST",
 						headers: {
-							"Content-Type": "application/json"
+							"Content-Type": "application/json",
+							"Authorization": "Bearer " + store.token // 🔥 Aquí va el token
 						},
 						body: JSON.stringify(comentData)
 					});
-			
+			       
 					if (!resp.ok) throw new Error("Error al agregar comentario");
 			
 					const data = await resp.json();
 			
 					// opcional: actualizar el store
-					const store = getStore();
 					setStore({ comentario: [...store.comentario, data] });
 			
 					return data;
 				} catch (error) {
 					console.error("Error al agregar :", error);
+					alert("Debes iniciar sesión para comentar."); // por si falla por no tener token
+					return null;
 				}
 			},
+			
 			getAllComentaryByPostId: async (postId) => {
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + `/comentarios/${postId}`, {
@@ -225,10 +247,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				
 				try{
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + `/api/comentarios/${comentario_id}`,{
+					const resp = await fetch(process.env.BACKEND_URL + `/comentarios/${comentario_id}`,{
 						method:"DELETE"
 					})
-					
+					     
 					if (!resp.ok) {  
 						throw new Error("Error al eliminar el comentario");
 					}
@@ -240,7 +262,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const updatedComentarios = store.comentario.filter(c => c.id !== comentario_id);
 					setStore({ comentario: updatedComentarios });
 			
-					return data;
+					return data;     
 					
 					
 					// don't forget to return something, that is how the async resolves
@@ -248,39 +270,45 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}catch(error){
 					console.log("Error loading message from backend", error)
 				}
-			},
+			},   
 			agregarPost: async (postData) => {
 				try {
-				  const resp = await fetch(process.env.BACKEND_URL + "/api/posts", {
-					method: "POST",
-					headers: {
-					  "Content-Type": "application/json"
-					},
-					body: JSON.stringify(postData)
-				  });
-			  
-				  if (!resp.ok) throw new Error("Error al agregar post");
-			  
-				  const data = await resp.json();
-				  const store = getStore();
-				  setStore({ post: [...store.post, data] });
-				  return data;
+					const store = getStore(); // obtener token guardado
+					const resp = await fetch(process.env.BACKEND_URL + "/posts", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": "Bearer " + store.token1 // 👈 Manda el token
+						},
+						body: JSON.stringify(postData)
+					});
+			
+					if (!resp.ok) throw new Error("No se pudo crear el post");
+			
+					const data = await resp.json();
+			
+					// actualizar el store opcionalmente
+					setStore({ post: [...store.post, data] });
+			
+					return data;
 				} catch (error) {
-				  console.error("Error al agregar post:", error);
-				  return null;
+					console.error("Error al crear post:", error);
+					alert("Debes iniciar sesión para publicar.");
+					return null;
 				}
-			  },
+			},
+			
 			  
 			
-
+   
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/writers")
+					const resp = await fetch(process.env.BACKEND_URL + "/writers")
 					const data = await resp.json()
 					setStore({ writer: data })
 					
-					
+					   
 					// don't forget to return something, that is how the async resolves
 					return data;
 				}catch(error){
@@ -290,7 +318,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getReader: async () => {
 				try{
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/readers")
+					const resp = await fetch(process.env.BACKEND_URL + "/readers")
 					const data = await resp.json()
 					setStore({ reader: data })
 					
@@ -304,7 +332,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getPost: async () => {
 				try{
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/posts")
+					const resp = await fetch(process.env.BACKEND_URL + "/posts")
 					const data = await resp.json()
 					setStore({ post: data })
 					
@@ -315,31 +343,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
-			LoginReader: async (credentials) => {
-				try {
-					const resp = await fetch('https://upgraded-trout-r56pvr9vgrg357p5-3001.app.github.dev/api/readers/login', {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify(credentials)
-					});
-			
-					if (!resp.ok) throw new Error("Credenciales inválidas");
-			
-					const data = await resp.json();
-					
-					setStore({ currentUser:data }); // <-- aquí se guarda el writer logueado
-			
-					return data;
-				} catch (err) {
-					console.error("Error de login:", err);
-					return null;
-				}
-			},
-			
+			setCurrentUser: (user) => {
+				setStore({ currentUser: user });
+			  },
+			setCurrentUser1: (user) => {
+				setStore({ currentUser1: user });
+			  },
+			  
 			getCommentario: async () => {
 				try{
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/comentarios")
+					const resp = await fetch(process.env.BACKEND_URL + "/comentarios")
 					const data = await resp.json()
 					setStore({ comentario: data })
 					
@@ -350,6 +364,146 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
+		
+			LoginReader: async (credentials) => {
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/readers/login`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(credentials)
+					});
+			
+					if (!resp.ok) throw new Error("Credenciales inválidas");
+			
+					const data = await resp.json();
+			
+					localStorage.setItem("token", data.access_token); // ← 🧠 guarda el token
+					localStorage.setItem("currentUser", JSON.stringify(data.reader)); // ← 🧠 opcional: guarda usuario
+			
+					setStore({
+						token: data.access_token,
+						currentUser: data.reader
+					});  
+			
+					return data;
+				} catch (err) {
+					console.error("Error de login:", err);
+					return null;
+				}
+			},
+			loginWriter: async (credentials) => {
+				try {
+					const resp = await fetch(`${process.env.BACKEND_URL}/writers/login`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(credentials)
+					});
+			
+					if (!resp.ok) throw new Error("Credenciales inválidas");
+			
+					const data = await resp.json();
+			
+					localStorage.setItem("token1", data.access_token); // ← 🧠 guarda el token
+					localStorage.setItem("currentUser1", JSON.stringify(data.writer)); // ← 🧠 opcional: guarda usuario
+			
+					setStore({
+						token1: data.access_token,
+						currentUser1: data.writer
+					});  
+			
+					return data;
+				} catch (err) {
+					console.error("Error de login:", err);
+					return null;
+				}
+			},
+			agregarPost: async (postData) => {
+				try {
+					const store = getStore();
+					const resp = await fetch(`${process.env.BACKEND_URL}/posts`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": "Bearer " + store.token1
+						},
+						body: JSON.stringify(postData)
+					});
+			
+					if (!resp.ok) throw new Error("Error al agregar el post");
+			
+					const data = await resp.json();
+			
+					// Agregar el nuevo post al store
+					setStore({ post: [...store.post, data] });
+			
+					return data;
+				} catch (error) {
+					console.error("Error al crear post:", error);
+					alert("Debes iniciar sesión para crear un post.");
+					return null;
+				}
+			},
+			logoutWriter: () => {
+				// Eliminar token e info de usuario del localStorage
+				localStorage.removeItem("token");
+				localStorage.removeItem("currentUser");
+			
+				// Limpiar el store también
+				setStore({
+					token: null,
+					currentUser: null
+				});
+			},
+			
+			
+			// eliminarPost: async (postId) => {
+			// 	try {
+			// 		const store = getStore();
+			// 		const resp = await fetch(process.env.BACKEND_URL + `/posts/${postId}`, {
+			// 			method: "DELETE",
+						
+			// 		});
+			
+			// 		if (!resp.ok) throw new Error("Error al eliminar el post");
+			// 		const data  = await resp.json()
+			
+			// 		// Eliminar el post del store
+			// 		const actualizados = store.post.filter(p => p.id !== postId);
+			// 		setStore({ post: actualizados });
+			// 		return data
+			// 	} catch (error) {
+			// 		console.error("Error al eliminar post:", error);
+			// 		alert("Ocurrió un error al intentar eliminar el post.");
+			// 	}
+			// },
+			eliminarPost: async (postId) => {
+				try {
+					const store = getStore();
+					const resp = await fetch(process.env.BACKEND_URL + `/posts/${postId}`, {
+						method: "DELETE",
+						headers: {
+							"Authorization": "Bearer " + store.token1 // 👈 Manda el token
+						}
+					});
+			
+					if (!resp.ok) throw new Error("Error al eliminar el post");
+			
+					const data = await resp.json();
+			
+					// Eliminar el post del store
+					const actualizados = store.post.filter(p => p.id !== postId);
+					setStore({ post: actualizados });
+			
+					return data;
+				} catch (error) {
+					console.error("Error al eliminar post:", error);
+					alert("Ocurrió un error al intentar eliminar el post.");
+				}
+			},
+			
+			
+			
+			
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();
